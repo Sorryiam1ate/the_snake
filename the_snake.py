@@ -39,21 +39,82 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
-...
+class GameObject:
+
+    def __init__(self) -> None:
+        self.position = (0, 0)
+        self.body_color = (100, 100, 100)
+
+    def draw(self):
+        raise NotImplementedError(
+            f'Не определён draw() в {self.__class__.__name__}'
+        )
+
+
+class Apple(GameObject):
+
+    def __init__(self) -> None:
+        self.body_color = APPLE_COLOR
+        self.position = self.randomize_position()
+
+    def randomize_position(self) -> tuple[int, int]:
+        return (
+            randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+            randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+        )
+
+        # return (randint(0, SCREEN_WIDTH - GRID_SIZE, GRID_SIZE))
+
+    def draw(self):
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, rect)
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class Snake(GameObject):
+
+    def draw(self):
+        for position in self.positions[:-1]:
+            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
+            pygame.draw.rect(screen, self.body_color, rect)
+            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+        # Отрисовка головы змейки
+        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, head_rect)
+        pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
+
+        # Затирание последнего сегмента
+        if self.last:
+            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
 
 def main():
     # Инициализация PyGame:
     pygame.init()
+
     # Тут нужно создать экземпляры классов.
-    ...
+    apple = Apple()
 
-    # while True:
-    #     clock.tick(SPEED)
+    apple.draw()
 
-        # Тут опишите основную логику игры.
-        # ...
+    print(apple.randomize_position())
+
+    running = True
+    while running:
+
+        pygame.display.update()
+
+        clock.tick(SPEED)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+
+    # Тут опишите основную логику игры.
+    # ...
 
 
 if __name__ == '__main__':
