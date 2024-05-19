@@ -1,4 +1,4 @@
-from random import choice, randint
+from random import randint
 
 import pygame
 
@@ -49,6 +49,7 @@ clock = pygame.time.Clock()
 
 
 class GameObject:
+    """Parent class for all objects"""
 
     def __init__(self) -> None:
         self.position = SCREEN_CENTER
@@ -56,30 +57,35 @@ class GameObject:
 
     # Если не унаследован
     def draw(self):
+        """Parent abstract method for drawing objects on the field"""
         raise NotImplementedError(
             f'Не определён draw() в {self.__class__.__name__}'
         )
 
 
 class Apple(GameObject):
+    """Child class for apple objects"""
 
     def __init__(self) -> None:
         self.position = self.randomize_position()
         self.body_color = APPLE_COLOR
 
     def randomize_position(self) -> tuple[int, int]:
+        """Get random position on screen"""
         return (
             randint(0, GRID_WIDTH - 1) * GRID_SIZE,
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE
         )
 
     def draw(self):
+        """Draw apple on screen"""
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Snake(GameObject):
+    """Child class for snake objects"""
 
     def __init__(self) -> None:
         self.position = SCREEN_CENTER
@@ -92,12 +98,14 @@ class Snake(GameObject):
 
     # Метод обновления направления после нажатия на кнопку
     def update_direction(self):
+        """Updating direction after clicking a button"""
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
 
     # Отрисовка Ячеек из списка positions
     def draw(self):
+        """Draw snake on screen"""
         for position in self.positions[:-1]:
             rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
             pygame.draw.rect(screen, self.body_color, rect)
@@ -115,9 +123,11 @@ class Snake(GameObject):
 
     # Метод который возвращает позицию головы змейки
     def get_head_position(self):
+        """Get snake head position"""
         return self.positions[0]
 
     def move(self):
+        """Moves snake on screen"""
         # Получаем направление змейки
         direction_x, direction_y = self.direction
 
@@ -149,11 +159,13 @@ class Snake(GameObject):
         # Если змейка выходит за экран по оси Y
         if self.positions[0][1] not in range(0, SCREEN_HEIGHT):
             self.positions.insert(
-                0, (self.positions[0][0], self.positions[0][1] % SCREEN_HEIGHT))
+                0, (self.positions[0][0],
+                    self.positions[0][1] % SCREEN_HEIGHT))
             self.positions.pop(1)
 
     # метод очищения экрана и обнуления позиций
     def reset(self):
+        """Restores all values to default state"""
         self.positions = [SCREEN_CENTER]
         self.direction = RIGHT
         self.next_direction = None
@@ -163,6 +175,7 @@ class Snake(GameObject):
 
 # Обработка нажатия
 def handle_keys(game_object):
+    """Keypress event handler"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -179,6 +192,7 @@ def handle_keys(game_object):
 
 
 def main():
+    """Main"""
     # Инициализация PyGame:
     pygame.init()
 
