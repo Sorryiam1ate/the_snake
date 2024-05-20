@@ -62,6 +62,7 @@ class GameObject:
         )
 
     def draw_cell(self, position):
+        """Method drawing one cell"""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
